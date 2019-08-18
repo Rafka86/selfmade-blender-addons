@@ -6,8 +6,33 @@ class PRIM_TEST_OT_ConeProps(bpy.types.Operator):
     bl_label = 'Cone'
     bl_options = {'REGISTER', 'UNDO'}
 
-    rad1: bpy.props.FloatProperty(name='radius1', default=1.0, min=0.0, step=1)
-    rad2: bpy.props.FloatProperty(name='radius2', min=0.0, step=1)
+    verts: bpy.props.IntProperty(
+        name='vertices', default=32, min=3, max=100000000
+    )
+    rad1: bpy.props.FloatProperty(
+        name='radius1', default=1.0, min=0.0, step=5
+    )
+    rad2: bpy.props.FloatProperty(
+        name='radius2', min=0.0, step=5
+    )
+    depth: bpy.props.FloatProperty(
+        name='depth', default=2.0, min=0.0, step=5
+    )
+    eft: bpy.props.EnumProperty(
+        name='end_fill_type',
+        items=[
+            ('NOTHING', 'Nothing', 'Don’t fill at all.'),
+            ('NGON', 'Ngon', 'Use ngons.'),
+            ('TRIFAN', 'Triangle Fan', 'Use triangle fans.')
+        ],
+        default='NGON'
+    )
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
 
     @classmethod
     def poll(cls, context):
@@ -19,8 +44,13 @@ class PRIM_TEST_OT_ConeProps(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.object.delete()
         bpy.ops.mesh.primitive_cone_add(
+            vertices=self.verts,
             radius1=self.rad1,
-            radius2=self.rad2
+            radius2=self.rad2,
+            depth=self.depth,
+            end_fill_type=self.eft,
+            location=self.location,
+            rotation=self.rotation
         )
         return {'FINISHED'}
 
