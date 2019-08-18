@@ -1,0 +1,8 @@
+.vscode
+bpy_utils/__pycache__
+camera
+img
+introduction
+lamp
+prim_mesh
+test
