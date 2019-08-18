@@ -330,6 +330,69 @@ class PRIM_TEST_OT_PlaneProps(bpy.types.Operator):
         return self.execute(context)
 
 
+class PRIM_TEST_OT_TorusProps(bpy.types.Operator):
+    bl_idname = 'prim_mesh_tester.torus_props'
+    bl_label = 'Torus'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
+    major_segments: bpy.props.IntProperty(
+        name='major_segments', default=48, min=3, max=256,
+    )
+    minor_segments: bpy.props.IntProperty(
+        name='major_segments', default=12, min=3, max=256,
+    )
+    mode: bpy.props.EnumProperty(
+        name='mode',
+        items=[
+            ('MAJOR_MINOR', 'Major/Minor',
+             'Use the major/minor radii for torus dimensions.'),
+            ('EXT_INT', 'Exterior/Interior',
+             'Use the exterior/interior radii for torus dimensions.')
+        ],
+        default='MAJOR_MINOR'
+    )
+    major_radius: bpy.props.FloatProperty(
+        name='major_radius', default=1.0, min=0.01, max=100.0, step=1
+    )
+    minor_radius: bpy.props.FloatProperty(
+        name='minor_radius', default=0.25, min=0.01, max=100.0, step=1
+    )
+    abso_major_rad: bpy.props.FloatProperty(
+        name='abso_major_rad', default=1.25, min=0.01, max=100.0, step=1
+    )
+    abso_minor_rad: bpy.props.FloatProperty(
+        name='abso_minor_rad', default=0.75, min=0.01, max=100.0, step=1
+    )
+
+    # @classmethod
+    # def poll(cls, context):
+    #     return selectable('Torus', context)
+
+    def execute(self, context):
+        bpy.ops.object.delete()
+        bpy.ops.mesh.primitive_torus_add(
+            location=self.location,
+            rotation=self.rotation,
+            major_segments=self.major_segments,
+            minor_segments=self.minor_segments,
+            mode=self.mode,
+            major_radius=self.major_radius,
+            minor_radius=self.minor_radius,
+            abso_major_rad=self.abso_major_rad,
+            abso_minor_rad=self.abso_minor_rad
+        )
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
 class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -346,6 +409,7 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
         layout.operator(PRIM_TEST_OT_IcoSphereProps.bl_idname)
         layout.operator(PRIM_TEST_OT_MonkeyProps.bl_idname)
         layout.operator(PRIM_TEST_OT_PlaneProps.bl_idname)
+        layout.operator(PRIM_TEST_OT_TorusProps.bl_idname)
 
 
 classes = (
@@ -357,6 +421,7 @@ classes = (
     PRIM_TEST_OT_IcoSphereProps,
     PRIM_TEST_OT_MonkeyProps,
     PRIM_TEST_OT_PlaneProps,
+    PRIM_TEST_OT_TorusProps,
     PRIM_TEST_PT_MeshPanel,
 )
 
