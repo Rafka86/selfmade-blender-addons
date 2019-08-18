@@ -1,6 +1,56 @@
 import bpy
 
 
+class PRIM_TEST_OT_CircleProps(bpy.types.Operator):
+    bl_idname = 'prim_mesh_tester.circle_props'
+    bl_label = 'Circle'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    verts: bpy.props.IntProperty(
+        name='vertices', default=32, min=3, max=100000000
+    )
+    radius: bpy.props.FloatProperty(
+        name='radius', default=1.0, min=0.0, step=5
+    )
+    fill_type: bpy.props.EnumProperty(
+        name='fill_type',
+        items=[
+            ('NOTHING', 'Nothing', 'Don’t fill at all.'),
+            ('NGON', 'Ngon', 'Use ngons.'),
+            ('TRIFAN', 'Triangle Fan', 'Use triangle fans.')
+        ],
+        default='NOTHING'
+    )
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
+
+    @classmethod
+    def poll(cls, context):
+        exist_circle = 'Circle' in bpy.data.objects
+        circle_selected = exist_circle and bpy.data.objects['Circle'].select_get(
+        )
+        no_selected = len(context.selected_objects) == 0
+        return circle_selected or (not exist_circle and no_selected)
+
+    def execute(self, context):
+        bpy.ops.object.delete()
+        bpy.ops.mesh.primitive_circle_add(
+            vertices=self.verts,
+            radius=self.radius,
+            fill_type=self.fill_type,
+            location=self.location,
+            rotation=self.rotation
+        )
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
 class PRIM_TEST_OT_ConeProps(bpy.types.Operator):
     bl_idname = 'prim_mesh_tester.cone_props'
     bl_label = 'Cone'
@@ -66,10 +116,12 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator('prim_mesh_tester.cone_props')
+        layout.operator(PRIM_TEST_OT_CircleProps.bl_idname)
+        layout.operator(PRIM_TEST_OT_ConeProps.bl_idname)
 
 
 classes = (
+    PRIM_TEST_OT_CircleProps,
     PRIM_TEST_OT_ConeProps,
     PRIM_TEST_PT_MeshPanel,
 )
