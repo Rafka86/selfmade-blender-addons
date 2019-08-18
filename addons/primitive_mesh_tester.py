@@ -190,6 +190,46 @@ class PRIM_TEST_OT_CylinderProps(bpy.types.Operator):
         return self.execute(context)
 
 
+class PRIM_TEST_OT_GridProps(bpy.types.Operator):
+    bl_idname = 'prim_mesh_tester.grid_props'
+    bl_label = 'Grid'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    x_subdivisions: bpy.props.IntProperty(
+        name='x_subdivisions', default=10, min=2, max=100000000
+    )
+    y_subdivisions: bpy.props.IntProperty(
+        name='y_subdivisions', default=10, min=2, max=100000000
+    )
+    size: bpy.props.FloatProperty(
+        name='size', default=2.0, min=0.0, step=5
+    )
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return selectable('Grid', context)
+
+    def execute(self, context):
+        bpy.ops.object.delete()
+        bpy.ops.mesh.primitive_grid_add(
+            x_subdivisions=self.x_subdivisions,
+            y_subdivisions=self.y_subdivisions,
+            size=self.size,
+            location=self.location,
+            rotation=self.rotation
+        )
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
 class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -202,6 +242,7 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
         layout.operator(PRIM_TEST_OT_ConeProps.bl_idname)
         layout.operator(PRIM_TEST_OT_CubeProps.bl_idname)
         layout.operator(PRIM_TEST_OT_CylinderProps.bl_idname)
+        layout.operator(PRIM_TEST_OT_GridProps.bl_idname)
 
 
 classes = (
@@ -209,6 +250,7 @@ classes = (
     PRIM_TEST_OT_ConeProps,
     PRIM_TEST_OT_CubeProps,
     PRIM_TEST_OT_CylinderProps,
+    PRIM_TEST_OT_GridProps,
     PRIM_TEST_PT_MeshPanel,
 )
 
