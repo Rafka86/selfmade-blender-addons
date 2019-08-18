@@ -266,6 +266,38 @@ class PRIM_TEST_OT_IcoSphereProps(bpy.types.Operator):
         return self.execute(context)
 
 
+class PRIM_TEST_OT_MonkeyProps(bpy.types.Operator):
+    bl_idname = 'prim_mesh_tester.monkey_props'
+    bl_label = 'Monkey'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    size: bpy.props.FloatProperty(
+        name='size', default=2.0, min=0.0, step=5
+    )
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return selectable('Suzanne', context)
+
+    def execute(self, context):
+        bpy.ops.object.delete()
+        bpy.ops.mesh.primitive_monkey_add(
+            size=self.size,
+            location=self.location,
+            rotation=self.rotation
+        )
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
 class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -280,6 +312,7 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
         layout.operator(PRIM_TEST_OT_CylinderProps.bl_idname)
         layout.operator(PRIM_TEST_OT_GridProps.bl_idname)
         layout.operator(PRIM_TEST_OT_IcoSphereProps.bl_idname)
+        layout.operator(PRIM_TEST_OT_MonkeyProps.bl_idname)
 
 
 classes = (
@@ -289,6 +322,7 @@ classes = (
     PRIM_TEST_OT_CylinderProps,
     PRIM_TEST_OT_GridProps,
     PRIM_TEST_OT_IcoSphereProps,
+    PRIM_TEST_OT_MonkeyProps,
     PRIM_TEST_PT_MeshPanel,
 )
 
