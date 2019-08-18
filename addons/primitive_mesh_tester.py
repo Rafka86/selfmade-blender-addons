@@ -108,6 +108,41 @@ class PRIM_TEST_OT_ConeProps(bpy.types.Operator):
         return self.execute(context)
 
 
+class PRIM_TEST_OT_CubeProps(bpy.types.Operator):
+    bl_idname = 'prim_mesh_tester.cube_props'
+    bl_label = 'Cube'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    size: bpy.props.FloatProperty(
+        name='size', default=2.0, min=0.0, step=5
+    )
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
+
+    @classmethod
+    def poll(cls, context):
+        exist_cone = 'Cube' in bpy.data.objects
+        cone_selected = exist_cone and bpy.data.objects['Cube'].select_get()
+        no_selected = len(context.selected_objects) == 0
+        return cone_selected or (not exist_cone and no_selected)
+
+    def execute(self, context):
+        bpy.ops.object.delete()
+        bpy.ops.mesh.primitive_cube_add(
+            size=self.size,
+            location=self.location,
+            rotation=self.rotation
+        )
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
 class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -118,11 +153,13 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
         layout = self.layout
         layout.operator(PRIM_TEST_OT_CircleProps.bl_idname)
         layout.operator(PRIM_TEST_OT_ConeProps.bl_idname)
+        layout.operator(PRIM_TEST_OT_CubeProps.bl_idname)
 
 
 classes = (
     PRIM_TEST_OT_CircleProps,
     PRIM_TEST_OT_ConeProps,
+    PRIM_TEST_OT_CubeProps,
     PRIM_TEST_PT_MeshPanel,
 )
 
