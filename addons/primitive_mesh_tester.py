@@ -1,5 +1,19 @@
 import bpy
 
+bl_info = {
+  "name": "Primitive Mesh Tester",
+  "description": "You can test how each primitive mesh changes as the argument changes.",
+  "author": "Rafka",
+  "version": (1, 0),
+  "blender": (2, 80, 0),
+  "support": "TESTING",
+  "category": "3D View",
+  "location": "View 3D -> Mesh Test",
+  "warning": "You cannot use torus mesh, sorry.",
+  "wiki_url": "https://github.com/Rafka86/selfmade-blender-addons/wiki",
+  "tracker_url": "https://github.com/Rafka86/selfmade-blender-addons/issues"
+}
+
 
 def selectable(name, context):
     exist = name in bpy.data.objects
