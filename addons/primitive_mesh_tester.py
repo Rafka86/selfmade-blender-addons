@@ -393,6 +393,46 @@ class PRIM_TEST_OT_TorusProps(bpy.types.Operator):
         return self.execute(context)
 
 
+class PRIM_TEST_OT_UvSphereProps(bpy.types.Operator):
+    bl_idname = 'prim_mesh_tester.uv_sphere_props'
+    bl_label = 'Sphere'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    segments: bpy.props.IntProperty(
+        name='segments', default=32, min=3, max=1000000
+    )
+    ring_count: bpy.props.IntProperty(
+        name='ring_count', default=16, min=3, max=1000000
+    )
+    radius: bpy.props.FloatProperty(
+        name='radius', default=1.0, min=0.0, step=5
+    )
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return selectable('Sphere', context)
+
+    def execute(self, context):
+        bpy.ops.object.delete()
+        bpy.ops.mesh.primitive_uv_sphere_add(
+            segments=self.segments,
+            ring_count=self.ring_count,
+            radius=self.radius,
+            location=self.location,
+            rotation=self.rotation
+        )
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
 class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -411,6 +451,7 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
         layout.operator(PRIM_TEST_OT_PlaneProps.bl_idname)
         # [TODO] Remove below comment out in the future after fixed torus add method.
         # layout.operator(PRIM_TEST_OT_TorusProps.bl_idname)
+        layout.operator(PRIM_TEST_OT_UvSphereProps.bl_idname)
 
 
 classes = (
@@ -423,6 +464,7 @@ classes = (
     PRIM_TEST_OT_MonkeyProps,
     PRIM_TEST_OT_PlaneProps,
     PRIM_TEST_OT_TorusProps,
+    PRIM_TEST_OT_UvSphereProps,
     PRIM_TEST_PT_MeshPanel,
 )
 
