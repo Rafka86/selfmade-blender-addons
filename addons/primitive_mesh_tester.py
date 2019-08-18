@@ -370,9 +370,9 @@ class PRIM_TEST_OT_TorusProps(bpy.types.Operator):
         name='abso_minor_rad', default=0.75, min=0.01, max=100.0, step=1
     )
 
-    # @classmethod
-    # def poll(cls, context):
-    #     return selectable('Torus', context)
+    @classmethod
+    def poll(cls, context):
+        return selectable('Torus', context)
 
     def execute(self, context):
         bpy.ops.object.delete()
@@ -409,7 +409,8 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
         layout.operator(PRIM_TEST_OT_IcoSphereProps.bl_idname)
         layout.operator(PRIM_TEST_OT_MonkeyProps.bl_idname)
         layout.operator(PRIM_TEST_OT_PlaneProps.bl_idname)
-        layout.operator(PRIM_TEST_OT_TorusProps.bl_idname)
+        # [TODO] Remove below comment out in the future after fixed torus add method.
+        # layout.operator(PRIM_TEST_OT_TorusProps.bl_idname)
 
 
 classes = (
