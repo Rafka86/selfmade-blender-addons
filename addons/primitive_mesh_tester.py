@@ -59,16 +59,16 @@ class PRIM_TEST_OT_ConeProps(bpy.types.Operator):
     verts: bpy.props.IntProperty(
         name='vertices', default=32, min=3, max=100000000
     )
-    rad1: bpy.props.FloatProperty(
+    radius1: bpy.props.FloatProperty(
         name='radius1', default=1.0, min=0.0, step=5
     )
-    rad2: bpy.props.FloatProperty(
+    radius2: bpy.props.FloatProperty(
         name='radius2', min=0.0, step=5
     )
     depth: bpy.props.FloatProperty(
         name='depth', default=2.0, min=0.0, step=5
     )
-    eft: bpy.props.EnumProperty(
+    end_fill_type: bpy.props.EnumProperty(
         name='end_fill_type',
         items=[
             ('NOTHING', 'Nothing', 'Don’t fill at all.'),
@@ -95,10 +95,10 @@ class PRIM_TEST_OT_ConeProps(bpy.types.Operator):
         bpy.ops.object.delete()
         bpy.ops.mesh.primitive_cone_add(
             vertices=self.verts,
-            radius1=self.rad1,
-            radius2=self.rad2,
+            radius1=self.radius1,
+            radius2=self.radius2,
             depth=self.depth,
-            end_fill_type=self.eft,
+            end_fill_type=self.end_fill_type,
             location=self.location,
             rotation=self.rotation
         )
