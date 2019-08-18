@@ -1,6 +1,13 @@
 import bpy
 
 
+def selectable(name, context):
+    exist = name in bpy.data.objects
+    selected = exist and bpy.data.objects[name].select_get()
+    no_selected = len(context.selected_objects) == 0
+    return selected or (not exist and no_selected)
+
+
 class PRIM_TEST_OT_CircleProps(bpy.types.Operator):
     bl_idname = 'prim_mesh_tester.circle_props'
     bl_label = 'Circle'
@@ -30,11 +37,7 @@ class PRIM_TEST_OT_CircleProps(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        exist_circle = 'Circle' in bpy.data.objects
-        circle_selected = exist_circle and bpy.data.objects['Circle'].select_get(
-        )
-        no_selected = len(context.selected_objects) == 0
-        return circle_selected or (not exist_circle and no_selected)
+        return selectable('Circle', context)
 
     def execute(self, context):
         bpy.ops.object.delete()
@@ -86,10 +89,7 @@ class PRIM_TEST_OT_ConeProps(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        exist_cone = 'Cone' in bpy.data.objects
-        cone_selected = exist_cone and bpy.data.objects['Cone'].select_get()
-        no_selected = len(context.selected_objects) == 0
-        return cone_selected or (not exist_cone and no_selected)
+        return selectable('Cone', context)
 
     def execute(self, context):
         bpy.ops.object.delete()
@@ -125,15 +125,62 @@ class PRIM_TEST_OT_CubeProps(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        exist_cone = 'Cube' in bpy.data.objects
-        cone_selected = exist_cone and bpy.data.objects['Cube'].select_get()
-        no_selected = len(context.selected_objects) == 0
-        return cone_selected or (not exist_cone and no_selected)
+        return selectable('Cube', context)
 
     def execute(self, context):
         bpy.ops.object.delete()
         bpy.ops.mesh.primitive_cube_add(
             size=self.size,
+            location=self.location,
+            rotation=self.rotation
+        )
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
+class PRIM_TEST_OT_CylinderProps(bpy.types.Operator):
+    bl_idname = 'prim_mesh_tester.cylinder_props'
+    bl_label = 'Cylinder'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    verts: bpy.props.IntProperty(
+        name='vertices', default=32, min=3, max=100000000
+    )
+    radius: bpy.props.FloatProperty(
+        name='radius', default=1.0, min=0.0, step=5
+    )
+    depth: bpy.props.FloatProperty(
+        name='depth', default=2.0, min=0.0, step=5
+    )
+    end_fill_type: bpy.props.EnumProperty(
+        name='end_fill_type',
+        items=[
+            ('NOTHING', 'Nothing', 'Don’t fill at all.'),
+            ('NGON', 'Ngon', 'Use ngons.'),
+            ('TRIFAN', 'Triangle Fan', 'Use triangle fans.')
+        ],
+        default='NGON'
+    )
+    location: bpy.props.FloatVectorProperty(
+        name='location', subtype='XYZ', step=5
+    )
+    rotation: bpy.props.FloatVectorProperty(
+        name='rotation', subtype='EULER', step=5
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return selectable('Cylinder', context)
+
+    def execute(self, context):
+        bpy.ops.object.delete()
+        bpy.ops.mesh.primitive_cylinder_add(
+            vertices=self.verts,
+            radius=self.radius,
+            depth=self.depth,
+            end_fill_type=self.end_fill_type,
             location=self.location,
             rotation=self.rotation
         )
@@ -154,12 +201,14 @@ class PRIM_TEST_PT_MeshPanel(bpy.types.Panel):
         layout.operator(PRIM_TEST_OT_CircleProps.bl_idname)
         layout.operator(PRIM_TEST_OT_ConeProps.bl_idname)
         layout.operator(PRIM_TEST_OT_CubeProps.bl_idname)
+        layout.operator(PRIM_TEST_OT_CylinderProps.bl_idname)
 
 
 classes = (
     PRIM_TEST_OT_CircleProps,
     PRIM_TEST_OT_ConeProps,
     PRIM_TEST_OT_CubeProps,
+    PRIM_TEST_OT_CylinderProps,
     PRIM_TEST_PT_MeshPanel,
 )
 
