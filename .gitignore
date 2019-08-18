@@ -1,5 +1,5 @@
 .vscode
-bpy_utils/__pycache__
+bpy_utils
 camera
 img
 introduction
